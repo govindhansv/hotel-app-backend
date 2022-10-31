@@ -39,23 +39,29 @@ app.get('/data', async(req, res) => {
     res.send('done');
 })
 
-app.get('/get', async(req, res) => {
+app.get('/get/:table', async(req, res) => {
+    let table = req.params.table
+    console.log("table: ",table);
     let usr = []
-    const users = await db.collection('users').get()
+    const users = await db.collection('orders').get()
     if (users.docs.length > 0) {
         for (const user of users.docs) {
             usr.push(user.data())
         }
     }
+
     let total = 0;
     console.log(usr);
     usr.forEach(i => {
-        console.log(i.age);
-
-        total = total + i.age;
+        
+        if (i.table == table) {
+            console.log(i);
+            total = total + i.price;
+        }
     });
-    let docRef = b.doc("dddddd")
+    let docRef = b.doc()
     await docRef.set({
+        table:table,
         total: total,
     });
     res.json(total)
